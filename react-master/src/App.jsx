@@ -1,13 +1,24 @@
-import { useState } from "react";
-
+import Profile from "./Profile";
 function App(){
-  const [count,setCount]=useState(0);
+  const profiles=[{
+        name: "Thiyagarasan",
+        role: "Aspiring Full Stack Developer"
+      },
+      {
+        name: "LICET",
+        role: "Engineering College"
+      },
+      {
+        name: "Student Project Hub",
+        role: "Java + DBMS Project"
+      }]
   return(
-    <div>
-    <h1>"Count": {count}</h1>
-    <button onClick={()=>setCount(count+1)}>Increase</button>
-    <strong>Licet</strong>
-    </div>
+    
+      profiles.map((profile)=>(
+        <Profile 
+            profile={profile}/>
+      ))
+    
   );
 }
 
