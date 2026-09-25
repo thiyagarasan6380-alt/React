@@ -4,19 +4,31 @@ function Sidebar() {
     return (
         <div className="w-64 bg-gradient-to-b from-orange-500 to-orange-700 text-white min-h-screen p-5">
 
-            <h1 className="text-2xl font-bold mb-8">
-                Student Hub
-            </h1>
+            <div className="mb-10 text-center">
+
+                <div className="text-5xl">
+                    
+                </div>
+
+                <h1 className="text-2xl font-bold">
+                    Student Hub
+                </h1>
+
+                <p className="text-sm">
+                    Find. Collaborate. Build.
+                </p>
+
+            </div>
 
             <div className="flex flex-col gap-4">
 
-                <Link to="/">Home</Link>
+                <Link className="rounded-lg p-3 hover:bg-orange-500" to="/">Home</Link>
 
-                <Link to="/projects">Projects</Link>
+                <Link className="rounded-lg p-3 hover:bg-orange-500" to="/projects">Projects</Link>
 
-                <Link to="/createproject">Create Project</Link>
+                <Link className="rounded-lg p-3 hover:bg-orange-500" to="/createproject">Create Project</Link>
 
-                <Link to="/login">Login</Link>
+                <Link className="rounded-lg p-3 hover:bg-orange-500" to="/login">Login</Link>
 
             </div>
 

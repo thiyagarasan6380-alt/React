@@ -1,26 +1,35 @@
-import { useEffect, useState } from "react";
-
+import { useState, useEffect } from "react";
+import ProjectViewCard from "../components/ProjectViewCard";
 function Projects() {
 
-  const [users, setUsers] = useState([]);
+    const [projects, setProjects] = useState([]);
 
-  useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((data) => setUsers(data));
-  }, []);
+    useEffect(() => {
+        const savedProjects =
+            JSON.parse(localStorage.getItem("projects")) || [];
 
-  return (
-    <div>
-      <h1>Users</h1>
+        setProjects(savedProjects);
+    }, []);
 
-      {users.map((user) => (
-        <p key={user.id}>
-          {user.name}
-        </p>
-      ))}
-    </div>
-  );
+    return (
+        <div className="min-h-screen bg-orange-50 p-8">
+
+            <h1 className="text-4xl font-bold text-orange-600 text-center">
+                All Projects
+            </h1>
+
+            <div className="mt-8">
+                {projects.map((project,index) => (
+                    <ProjectViewCard
+                        key={index}
+                        project={project}
+                        
+                    />
+                ))}
+            </div>
+
+        </div>
+    );
 }
 
 export default Projects;
