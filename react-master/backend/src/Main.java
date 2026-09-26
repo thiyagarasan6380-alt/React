@@ -1,11 +1,22 @@
+import service.ProjectService;
 import java.util.*;
+
+import model.Admin;
+import model.Application;
+import model.Project;
+import model.Student;
+import model.Team;
+import model.User;
 
 public class Main {
     public static void main(String[] args) {
+        ProjectService service = new ProjectService();
+        service.createProject();
 
         boolean running = true;
 
         Scanner sc = new Scanner(System.in);
+        ArrayList<Project> projects = new ArrayList<>();
         Student s1 = null;
         Project p1 = null;
 
@@ -27,6 +38,7 @@ public class Main {
             System.out.println("5. Form Team");
             System.out.println("6. view Team");
             System.out.println("7. Exit");
+            System.out.println("8. View All Projects");
 
             System.out.print("Enter Choice: ");
 
@@ -57,18 +69,20 @@ public class Main {
                 case 2:
                     System.out.println("Create Project Selected");
 
-                    p1 = new Project();
+                    Project project = new Project();
+
                     System.out.print("Enter Project Name : ");
                     String projectName = sc.nextLine();
+
                     System.out.print("Enter Required Skill : ");
                     String requiredSkill = sc.nextLine();
 
-                    p1.setProjectName(projectName);
-                    p1.setRequiredSkill(requiredSkill);
+                    project.setProjectName(projectName);
+                    project.setRequiredSkill(requiredSkill);
 
-                    System.out.println("Successfully Created Project");
-                    System.out.println("ProjectName : " + p1.getProjectName());
-                    System.out.println("RequiredSkill : " + p1.getRequiredSkill());
+                    projects.add(project);
+
+                    System.out.println("Project Added Successfully");
 
                     break;
 
@@ -128,6 +142,19 @@ public class Main {
                 case 7:
                     System.out.println("Exiting...");
                     running = false;
+                    break;
+                case 8:
+
+                    if (projects.isEmpty()) {
+                        System.out.println("No Projects Available");
+                    } else {
+                        for (Project p : projects) {
+                            System.out.println("----------------");
+                            System.out.println("Project : " + p.getProjectName());
+                            System.out.println("Skill : " + p.getRequiredSkill());
+                        }
+                    }
+
                     break;
 
                 default:

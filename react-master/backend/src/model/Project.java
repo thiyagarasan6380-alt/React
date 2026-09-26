@@ -1,3 +1,5 @@
+package model;
+
 public class Project {
     private String projectName;
     private String requiredSkill;

@@ -1,3 +1,5 @@
+package model;
+
 public class Application {
     private Student student;
     private Project project;
