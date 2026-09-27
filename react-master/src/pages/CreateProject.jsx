@@ -8,52 +8,95 @@ function CreateProject(){
     const [description,setDescription]=useState("");
    
 
-    const [projects, setProjects] = useState(() => {
-    return JSON.parse(localStorage.getItem("projects")) || [];
-    });
-    useEffect(()=>{
-        localStorage.setItem("projects",JSON.stringify(projects));
-    },[projects]);
+    const [projects, setProjects] = useState([]);
+
+        useEffect(() => {
+            fetch("http://localhost:8080/projects")
+                .then((response) => response.json())
+                .then((data) => setProjects(data))
+                .catch((error) => console.log(error));
+        }, []);
 
     function Submit(){
         const newProject = {
-            id: Date.now(),
+            
             projectName: projectName,
-            skillName: skillName.split(","),
+            skillName: skillName,
             description:description,
             status: "Open",
-            applicants: [],
-            teamMembers: [],
-            owner: localStorage.getItem("user")
+            
+            owner: localStorage.getItem("user"),
+            
         };
-        setProjects([...projects, newProject]);
+        fetch("http://localhost:8080/projects", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newProject)
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            setProjects((prev) => [...prev, data]);
+        });
         setProjectName("");
         setSkillName("");
         setDescription("");
     }
 
     function Delete(indexToDelete){
-        const updateProjects=projects.filter(
+
+    const projectId = projects[indexToDelete].id;
+
+    fetch(`http://localhost:8080/projects/${projectId}`,{
+        method:"DELETE"
+    })
+    .then(() => {
+        const updateProjects = projects.filter(
             (_,index)=>index!==indexToDelete
-    );
+        );
+
         setProjects(updateProjects);
-    }
+    })
+    .catch((error) => console.log(error));
+}
 
     function Update(index){
-        alert("Enter new Project name and Skill : ");
-        const newName=prompt("Enter project name : ");
-        const newSkill=prompt("Enter skill name : ");
 
-        const updateProjects=[...projects];
-        
-        updateProjects[index]={
-            ...updateProjects[index],
-            projectName:newName,
-            skillName:newSkill
-        };
-        setProjects(updateProjects);
+    const newName = prompt(
+        "Enter new project name",
+        projects[index].projectName
+    );
 
-    }
+    const newSkill = prompt(
+        "Enter skills",
+        projects[index].skillName
+    );
+
+    if(!newName) return;
+
+    const updatedProject = {
+        ...projects[index],
+        projectName: newName,
+        skillName: newSkill
+    };
+
+    fetch(`http://localhost:8080/projects/${projects[index].id}`,{
+        method:"PUT",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify(updatedProject)
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        const updatedProjects = [...projects];
+        updatedProjects[index] = data;
+
+        setProjects(updatedProjects);
+    });
+}
 
     function changeStatus(index) {
         const updated = [...projects];
@@ -65,13 +108,26 @@ function CreateProject(){
 
         setProjects(updated);
         }
-    function applyProject(index){
-        const studentName=prompt("Enter your name");
-        if(!studentName)
-            return;
-        const updated=[...projects];
-        updated[index].applicants.push(studentName);
-        setProjects(updated);
+    function applyProject(projectId){
+
+    const studentId = 1; // temporary
+
+    fetch("http://localhost:8080/applications",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            studentId:studentId,
+            projectId:projectId
+        })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        alert("Application Submitted");
+        console.log(data);
+    });
+
     }
 
     const [searchTerm, setSearchTerm] = useState(""); 
@@ -83,6 +139,9 @@ function CreateProject(){
     function acceptApplicant(projectIndex, applicantName) {
 
     const updated = [...projects];
+    if (!updated[projectIndex].teamMembers) {
+    updated[projectIndex].teamMembers = [];
+    }
 
     updated[projectIndex].teamMembers.push(applicantName);
 

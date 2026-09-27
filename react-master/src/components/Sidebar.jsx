@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 function Sidebar() {
+    
     return (
         <div className="w-64 bg-gradient-to-b from-orange-500 to-orange-700 text-white min-h-screen p-5">
 
@@ -25,6 +26,8 @@ function Sidebar() {
                 <Link className="rounded-lg p-3 hover:bg-orange-500" to="/">Home</Link>
 
                 <Link className="rounded-lg p-3 hover:bg-orange-500" to="/projects">Projects</Link>
+
+                <Link className="rounded-lg p-3 hover:bg-orange-500" to="/MyApplication">MyApplication</Link>
 
                 <Link className="rounded-lg p-3 hover:bg-orange-500" to="/createproject">Create Project</Link>
 

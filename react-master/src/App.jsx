@@ -4,6 +4,10 @@ import Projects from "./pages/Projects";
 import Login from "./pages/Login";
 import CreateProject from "./pages/CreateProject";
 import Sidebar from "./components/Sidebar";
+import ProjectDetails from "./pages/ProjectDetails";
+import MyApplications from "./pages/MyApplication";
+import Applications from "./pages/Applications";
+import TeamMembers from "./pages/TeamMembers";
 
 function App() {
 
@@ -41,6 +45,13 @@ function App() {
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/CreateProject" element={<CreateProject />} />
+                    <Route path="/MyApplication"
+                        element={<MyApplications />}
+                    />
+                    <Route path="/project/:id" element={<ProjectDetails />}
+                        />
+                    <Route path="/applications" element={<Applications />} />
+                    <Route path="/team" element={<TeamMembers />} />
                 </Routes>
 
             </div>

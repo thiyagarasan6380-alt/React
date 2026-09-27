@@ -4,32 +4,44 @@ import { useNavigate } from "react-router-dom";
 
 
 function Login() {
-    const [studentName, setStudentName] = useState("");
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
     const navigate = useNavigate();
-    function handleLogin() {
+    function login() {
 
-    if (!studentName.trim()) {
-        alert("Enter your name");
-        return;
-    }
+    fetch("http://localhost:8080/users/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username,
+            password
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
 
-    localStorage.setItem("user", studentName);
+        if(data){
 
-    alert("Login Successful");
+            localStorage.setItem("user", data.username);
 
-    navigate("/");
+            alert("Login Successful");
+
+            navigate("/createproject");
+
+        } else {
+
+            alert("Invalid Username or Password");
+
+        }
+
+    });
+
 }
-    function handleLogin() {
-    if (!studentName.trim()) {
-        alert("Enter your name");
-        return;
-    }
-
-    localStorage.setItem("user", studentName);
-
-    navigate("/");
-    window.location.reload();
-}
+    
   return (
     <div className="min-h-screen bg-orange-50 flex justify-center items-center">
 
@@ -40,21 +52,23 @@ function Login() {
         </h1>
 
         <input
-        type="text"
-        placeholder="Student Name"
-        value={studentName}
-        onChange={(e) => setStudentName(e.target.value)}
-        className="w-full border p-3 rounded-lg mt-6"
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full border p-3 rounded-lg mt-6"
         />
 
         <input
-          type="password"
-          placeholder="Password"
-          className="w-full border p-3 rounded-lg mt-4"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border p-3 rounded-lg mt-4"
         />
 
         <button
-            onClick={handleLogin}
+            onClick={login}
             className="w-full bg-orange-500 text-white py-3 rounded-lg mt-6"
         >
             Login

@@ -1,5 +1,8 @@
+import { Link } from "react-router-dom";
+
 function ProjectViewCard({ project }) {
     return (
+        <Link to={`/project/${project.id}`}>
         <div className="bg-white rounded-xl shadow-md p-5 mt-4">
 
             <div className="flex justify-between items-center">
@@ -41,13 +44,8 @@ function ProjectViewCard({ project }) {
                 👥 {project.teamMembers?.length || 0} Team Members
             </p>
 
-            <button
-                className="w-full mt-4 bg-orange-500 text-white py-2 rounded-lg"
-            >
-                Apply
-            </button>
-
         </div>
+        </Link>
     );
 }
 
