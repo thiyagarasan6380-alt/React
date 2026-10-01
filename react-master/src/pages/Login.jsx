@@ -27,6 +27,7 @@ function Login() {
         if(data){
 
             localStorage.setItem("user", data.username);
+            localStorage.setItem("userId", data.id);
 
             alert("Login Successful");
 

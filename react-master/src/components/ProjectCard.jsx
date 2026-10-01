@@ -1,3 +1,5 @@
+import {useState,useEffect}from "react";
+
 function ProjectCard({
     project,
     index,
@@ -5,18 +7,56 @@ function ProjectCard({
     Update,
     changeStatus,
     applyProject,
-    acceptApplicant
+    acceptApplicant,
+    applications
 }) {
 
     const currentUser = localStorage.getItem("user");
     const isOwner = currentUser === project.owner;
+    const [userNames,setUserNames]=useState({});
+
+    useEffect(() => {
+    const studentIds = [
+        ...new Set(
+            applications.map((app) => app.studentId)
+        )
+    ];
+
+    Promise.all(
+        studentIds.map((id) =>
+            fetch(`http://localhost:8080/users/id/${id}`)
+                .then((res) => res.json())
+                .then((user) => ({
+                    id,
+                    username: user.username
+                }))
+        )
+    ).then((users) => {
+        const names = {};
+
+        users.forEach((user) => {
+            names[user.id] = user.username;
+        });
+
+        setUserNames(names);
+    });
+}, [applications]);
 
     const skills =
     typeof project.skillName === "string"
         ? project.skillName.split(",")
         : project.skillName || [];
-    const applicants = project.applicants || [];
-    const teamMembers = project.teamMembers || [];
+const projectApplications = applications.filter(
+    (app) => app.projectId === project.id
+);
+
+const pendingApplications = projectApplications.filter(
+    (app) => app.status === "Pending"
+);
+
+const acceptedApplications = projectApplications.filter(
+    (app) => app.status === "Accepted"
+);
 
     return (
         <div className="bg-white rounded-xl shadow-md p-5 mt-4">
@@ -81,11 +121,11 @@ function ProjectCard({
             <div className="mt-6 border-t pt-4">
 
                 <p className="text-gray-700 font-medium">
-                    👥 {applicants.length} Applicants
+                    👥 {pendingApplications.length} Applicants
                 </p>
 
                 <p className="text-gray-700 mt-1">
-                    👨‍💻 {teamMembers.length} Team Members
+                    👨‍💻 {acceptedApplications.length} Team Members
                 </p>
 
             </div>
@@ -96,21 +136,23 @@ function ProjectCard({
                     Applicants
                 </h3>
 
-                {applicants.length === 0 ? (
+                {pendingApplications.length === 0 ? (
                     <p className="text-gray-400">
                         No applicants yet
                     </p>
                 ) : (
-                    applicants.map((name, i) => (
+                    pendingApplications.map((application) => (
                         <div
-                            key={i}
+                            key={application.id}
                             className="flex justify-between items-center bg-gray-50 rounded-lg p-3 mb-2"
                         >
-                            <span>👤 {name}</span>
+                            <span>
+                                👤 {userNames[application.studentId] || "Loading..."}
+                            </span>
 
                             {isOwner && (
                                 <button
-                                    onClick={() => acceptApplicant(index, name)}
+                                    onClick={() => acceptApplicant(application.id)}
                                     className="bg-green-500 text-white px-3 py-1 rounded-lg"
                                 >
                                     Accept
@@ -128,14 +170,14 @@ function ProjectCard({
                     Team Members
                 </p>
 
-                {teamMembers.length === 0 ? (
+                {acceptedApplications.length === 0 ? (
                     <p className="text-gray-400">
                         No team members yet
                     </p>
                 ) : (
-                    teamMembers.map((member, i) => (
-                        <p key={i}>
-                            👨‍💻 {member}
+                    acceptedApplications.map((application) => (
+                        <p key={application.id}>
+                            👨‍💻 {userNames[application.studentId] || "Loading..."}
                         </p>
                     ))
                 )}

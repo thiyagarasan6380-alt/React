@@ -9,11 +9,17 @@ function CreateProject(){
    
 
     const [projects, setProjects] = useState([]);
+    const [applications,setApplications]= useState([]);
 
         useEffect(() => {
             fetch("http://localhost:8080/projects")
                 .then((response) => response.json())
                 .then((data) => setProjects(data))
+                .catch((error) => console.log(error));
+
+                fetch("http://localhost:8080/applications")
+                .then((response) => response.json())
+                .then((data) => setApplications(data))
                 .catch((error) => console.log(error));
         }, []);
 
@@ -99,36 +105,31 @@ function CreateProject(){
 }
 
     function changeStatus(index) {
-        const updated = [...projects];
+    const project = projects[index];
 
-        updated[index].status =
-            updated[index].status === "Open"
-            ? "Closed"
-            : "Open";
+    const newStatus =
+        project.status === "Open" ? "Closed" : "Open";
 
-        setProjects(updated);
-        }
-    function applyProject(projectId){
+    const updatedProject = {
+        ...project,
+        status: newStatus
+    };
 
-    const studentId = 1; // temporary
-
-    fetch("http://localhost:8080/applications",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
+    fetch(`http://localhost:8080/projects/${project.id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
         },
-        body:JSON.stringify({
-            studentId:studentId,
-            projectId:projectId
-        })
+        body: JSON.stringify(updatedProject)
     })
-    .then(res=>res.json())
-    .then(data=>{
-        alert("Application Submitted");
-        console.log(data);
-    });
-
-    }
+    .then(response => response.json())
+    .then(data => {
+        const updatedProjects = [...projects];
+        updatedProjects[index] = data;
+        setProjects(updatedProjects);
+    })
+    .catch(error => console.log(error));
+}
 
     const [searchTerm, setSearchTerm] = useState(""); 
     const filteredProjects = projects.filter((project) =>
@@ -136,22 +137,43 @@ function CreateProject(){
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     );
-    function acceptApplicant(projectIndex, applicantName) {
-
-    const updated = [...projects];
-    if (!updated[projectIndex].teamMembers) {
-    updated[projectIndex].teamMembers = [];
-    }
-
-    updated[projectIndex].teamMembers.push(applicantName);
-
-    updated[projectIndex].applicants =
-        updated[projectIndex].applicants.filter(
-            (name) => name !== applicantName
+    function acceptApplicant(applicationId) {
+    fetch(`http://localhost:8080/applications/accept/${applicationId}`, {
+        method: "PUT"
+    })
+    .then(response => response.json())
+    .then(data => {
+        setApplications(prev =>
+            prev.map(app =>
+                app.id === data.id ? data : app
+            )
         );
 
-    setProjects(updated);
-    }
+        alert("Applicant Accepted");
+    })
+    .catch(error => console.log(error));
+}
+
+function applyProject(projectId) {
+    const studentId = Number(localStorage.getItem("userId"));
+
+    fetch("http://localhost:8080/applications", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            studentId: studentId,
+            projectId: projectId
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("Application Submitted");
+        console.log(data);
+    })
+    .catch(error => console.log(error));
+}
     
     return(
         
@@ -192,6 +214,7 @@ function CreateProject(){
                         changeStatus={changeStatus}
                         applyProject={applyProject}
                         acceptApplicant={acceptApplicant}
+                        applications={applications}
                 />     
             ))
             }
