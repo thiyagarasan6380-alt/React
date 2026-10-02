@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 function Home() {
 
   const [projects,setProjects]=useState([]);
+  const [applications,setApplications]=useState([]);
   useEffect(() => {
 
     fetch("http://localhost:8080/projects")
@@ -10,19 +11,20 @@ function Home() {
         .then(data => setProjects(data))
         .catch(error => console.log(error));
 
+    fetch("http://localhost:8080/applications")
+        .then(response => response.json())
+        .then(data => setApplications(data))
+        .catch(error => console.log(error));
+
 }, []);
     const totalProject=projects.length;
-    const totalApplicant = projects.reduce(
-      (sum, project) => sum + (project.applicants?.length || 0),
-      0
-    );
+    const totalApplicant = applications.length;
 
-    const totalTeamMembers = projects.reduce(
-      (sum, project) => sum + (project.teamMembers?.length || 0),
-      0
-    );
+    const totalTeamMembers = applications.filter(
+      (application) => application.status === "Accepted"
+    ).length;
     const openProjects=projects.filter(
-      (project)=>project.status=="Open"
+      (project)=>project.status==="Open"
     ).length;
     const currentUser=localStorage.getItem("user");
     const myProjects=projects.filter(
@@ -30,16 +32,16 @@ function Home() {
     );
 
   return (
-    <div className="min-h-screen bg-orange-50">
+    <div className="flex justify-center  min-h-screen bg-orange-50  ">
 
-      <div className="text-center max-w-3xl px-4">
+      <div className="text-center max-w-3xl px-1">
 
         <h1 className="text-5xl font-bold text-orange-600">
-          Student Project Hub
+          TEVORA
         </h1>
         <p className="text-lg text-orange-700 mt-2">
-    Welcome, {currentUser || "Guest"} 👋
-</p>
+          Welcome, {currentUser || "Guest"} 👋
+       </p>
 
         <p className="text-xl text-gray-700 mt-4">
           Find. Collaborate. Build.
@@ -153,7 +155,7 @@ function Home() {
         My Projects
     </h2>
 
-    <div className="mt-6">
+    <div className="gap-4 mt-3" >
 
         {myProjects.length === 0 ? (
 
@@ -184,27 +186,27 @@ function Home() {
           ))
         )}
 
-    </div>
+      </div>
 
-</div>
-  <div className="text-center mt-20">
+      </div>
+        <div className="text-center mt-8">
 
-  <h2 className="text-3xl font-bold text-orange-600">
-    Ready to Build Something Amazing?
-  </h2>
+        <h2 className="text-3xl font-bold text-orange-600">
+          Ready to Build Something Amazing?
+        </h2>
 
-  <p className="text-gray-600 mt-3">
-    Join projects, find teammates, and bring ideas to life.
-  </p>
+        <p className="text-gray-600 mt-3">
+          Join projects, find teammates, and bring ideas to life.
+        </p>
 
-  <Link
-    to="/CreateProject"
-    className="inline-block mt-6 bg-orange-500 text-white px-8 py-3 rounded-lg"
-  >
-    Get Started
-  </Link>
+        <Link
+          to="/CreateProject"
+          className="inline-block mt-6 bg-orange-500 text-white px-8 py-3 rounded-lg"
+        >
+          Get Started
+        </Link>
 
-</div>
+      </div>
 
 </div>
 

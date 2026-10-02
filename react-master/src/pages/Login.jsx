@@ -32,6 +32,7 @@ function Login() {
             alert("Login Successful");
 
             navigate("/createproject");
+            window.location.reload();
 
         } else {
 
@@ -40,6 +41,7 @@ function Login() {
         }
 
     });
+    
 
 }
     

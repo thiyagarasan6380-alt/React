@@ -9,16 +9,17 @@ import MyApplications from "./pages/MyApplication";
 import Applications from "./pages/Applications";
 import TeamMembers from "./pages/TeamMembers";
 
+
 function App() {
 
     const user = localStorage.getItem("user");
 
     return (
-        <div className="flex">
+        <div className="flex h-screen overflow-hidden">
 
             <Sidebar />
 
-            <div className="flex-1 p-4">
+            <div className="flex-1 h-screen overflow-y-auto p-4">
 
                 {user && (
                     <div className="flex justify-end items-center gap-3 mb-4">
@@ -59,5 +60,4 @@ function App() {
         </div>
     );
 }
-
 export default App;
